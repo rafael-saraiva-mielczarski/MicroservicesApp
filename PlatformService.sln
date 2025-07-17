@@ -5,7 +5,7 @@ VisualStudioVersion = 17.14.36301.6
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlatformService", "PlatformService\PlatformService.csproj", "{5B149C26-63B1-4310-B418-79D40AA9EFD0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlatformServiceUnitTesting", "PlatformServiceUnitTesting\PlatformServiceUnitTesting.csproj", "{2C41713A-4672-403F-9CD9-8156BBE6B30A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlatformService.UnitTesting", "PlatformServiceUnitTesting\PlatformService.UnitTesting.csproj", "{2C41713A-4672-403F-9CD9-8156BBE6B30A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
