@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PlatformService.Data;
 using PlatformService.Dtos;
 using PlatformService.Entities;
+using PlatformService.SyncDataServices.Http;
 
 namespace PlatformService.Controllers
 {
@@ -12,11 +13,13 @@ namespace PlatformService.Controllers
     {
         private readonly IPlatformRepository _platformRepository;
         private readonly IMapper _mapper;
+        private readonly ICommandDataClient _commandDataClient;
 
-        public PlatformController(IPlatformRepository platformRepository, IMapper mapper)
+        public PlatformController(IPlatformRepository platformRepository, IMapper mapper, ICommandDataClient commandDataClient)
         {
             _platformRepository = platformRepository;
             _mapper = mapper;
+            _commandDataClient = commandDataClient;
         }
 
         /// <summary>
@@ -92,27 +95,28 @@ namespace PlatformService.Controllers
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(PlatformReadDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public ActionResult<PlatformReadDto> CreatePlatform([FromBody] PlatformCreateDto platform)
+        public async Task<ActionResult<PlatformReadDto>> CreatePlatform([FromBody] PlatformCreateDto platform)
         {
             var platformAlreadyExists = _platformRepository.GetPlatformByName(platform.Name);
 
             if (platformAlreadyExists == null)
             {
+                var platformModel = _mapper.Map<Platform>(platform);
+
+                _platformRepository.CreatePlatform(platformModel);
+                _platformRepository.SaveChanges();
+
+                var platformReadDto = _mapper.Map<PlatformReadDto>(platformModel);
+
                 try
                 {
-                    var platformModel = _mapper.Map<Platform>(platform);
-
-                    _platformRepository.CreatePlatform(platformModel);
-                    _platformRepository.SaveChanges();
-
-                    var platformReadDto = _mapper.Map<PlatformReadDto>(platformModel);
-
-                    return CreatedAtRoute(nameof(GetPlatformById), new { Id = platformReadDto.Id }, platformReadDto);
+                    await _commandDataClient.SendPlatformToCommand(platformReadDto);
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception(ex.Message);
+                    throw new Exception($"--> Could not send synchronously {ex.Message}");
                 }
+                return CreatedAtRoute(nameof(GetPlatformById), new { Id = platformReadDto.Id }, platformReadDto);
             }
             else
             {
