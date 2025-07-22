@@ -24,7 +24,7 @@ namespace CommandsService.Controllers
         ///  /// <remarks>
         /// Example request:
         /// ```http
-        /// GET /api/Platform
+        /// GET /api/c/platforms
         /// ```
         /// Example response:
         /// ```json
