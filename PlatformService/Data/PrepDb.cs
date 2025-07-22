@@ -9,7 +9,7 @@ namespace PlatformService.Data
         {
             using (var serviceScope = app.ApplicationServices.CreateScope())
             {
-                SeedData(serviceScope.ServiceProvider.GetService<AppDbContext>());
+                SeedData(serviceScope.ServiceProvider.GetService<AppDbContext>(), isProduction);
             }
         }
 
@@ -17,14 +17,14 @@ namespace PlatformService.Data
         {
             if (isProduction)
             {
-                Console.WriteLine("--> Attemptin to apply migration...")
+                Console.WriteLine("--> Attemptin to apply migration...");
                 try
                 {
-                    context.Database.Migrate()
+                    context.Database.Migrate();
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("--> Failed to make migrations.")
+                    Console.WriteLine("--> Failed to make migrations.");
                 }
             }
 
