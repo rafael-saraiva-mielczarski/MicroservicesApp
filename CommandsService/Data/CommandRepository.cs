@@ -31,7 +31,7 @@ namespace CommandsService.Data
 
         public IEnumerable<Platform> GetAllPlatforms()
         {
-            return _context.Platforms.ToList();
+            return [.. _context.Platforms];
         }
 
         public Command GetCommand(Guid platformId, Guid commandId)
@@ -50,6 +50,11 @@ namespace CommandsService.Data
         public bool PlatformExists(Guid platformId)
         {
             return _context.Platforms.Any(p => p.Id == platformId);
+        }
+
+        public bool ExternalPlatformExists(Guid externalPlatformId)
+        {
+            return _context.Platforms.Any(p => p.ExternalID == externalPlatformId);
         }
 
         public bool SaveChanges()
